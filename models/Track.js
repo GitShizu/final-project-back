@@ -9,6 +9,9 @@ const schema = new Schema({
     },
     duration_m: {
         type: Number
+    },
+    playlist: {
+        type: SchemaTypes.ObjectId
     }
 })
 
