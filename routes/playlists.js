@@ -56,7 +56,6 @@ router.patch('/:slug', async (req, res) => {
         })
         if (isTitleUpdated) {
             await Playlist.generateSlug();
-            console.log('Slug updated');
         }
         playlist.trackList = [];
         await playlist.save();
