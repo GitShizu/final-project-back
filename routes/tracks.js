@@ -70,3 +70,5 @@ router.delete('/:slug', async (req,res)=>{
         res.status(404).send(e.message);
     }
 })
+
+export default router;

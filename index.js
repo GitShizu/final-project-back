@@ -1,8 +1,10 @@
-import morgan from "morgan";
-import express from "express";
+import morgan from 'morgan';
+import express from 'express';
 import cors from 'cors';
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import dotenv from 'dotenv'; dotenv.config();
+import playlistsRoutes from './routes/playlists.js'
+import tracksRoutes from './routes/tracks.js'
 
 const {MONGO_URI} = process.env;
 const PORT = process.env || 3000;
@@ -12,6 +14,9 @@ const app = express();
 app.use(morgan('dev'));
 app.use(cors({origin:'*'}));
 app.use(express.json());
+
+app.use('/playlists', playlistsRoutes);
+app.use('/tracks', tracksRoutes)
 
 mongoose.connect(MONGO_URI)
 .then(()=>{
