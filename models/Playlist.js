@@ -1,5 +1,5 @@
 import { SchemaTypes, model, Schema } from "mongoose";
-import Track from "./Track";
+import Track from "./Track.js";
 
 const schema = new Schema({
     title: {
@@ -16,9 +16,9 @@ const schema = new Schema({
         type: Array,
         default: []
     },
-    createdBy: {
-        type: SchemaTypes.ObjectId
-    },
+    // createdBy: {
+    //     type: SchemaTypes.ObjectId
+    // },
     slug: {
         type: String,
         trim: true

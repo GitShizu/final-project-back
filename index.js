@@ -7,7 +7,7 @@ import playlistsRoutes from './routes/playlists.js'
 import tracksRoutes from './routes/tracks.js'
 
 const {MONGO_URI} = process.env;
-const PORT = process.env || 3000;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 

@@ -7,7 +7,7 @@ router.use(express.json());
 
 router.get('/', async (req, res) => {
     try {
-        const playlists = Playlist.find().select('-trackList')
+        const playlists = await Playlist.find().select('-trackList')
         const playlistsWithCount = await Promise.all(playlists.map(async p => {
             p.tracksCounter()
             return p
@@ -19,16 +19,16 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const playlist = new Musician(req.body);
+    const playlist = new Playlist(req.body);
     await playlist.generateSlug();
     await playlist.tracksCounter();
     playlist.trackList = [];
     await playlist.save();
-    const playlists = await Playlist.find();
+    const playlists = await Playlist.find().select('-trackList');
     res.send(playlists);
 })
 
-router.post('/:slug', async (req, res) => {
+router.get('/:slug', async (req, res) => {
     try {
         const playlist = await Playlist.findOne({ slug: req.params.slug }); // to be added: populate tracks
         if (playlist === null) {
@@ -55,12 +55,12 @@ router.patch('/:slug', async (req, res) => {
             }
         })
         if (isTitleUpdated) {
-            await Playlist.generateSlug();
+            await playlist.generateSlug();
         }
         playlist.trackList = [];
         await playlist.save();
         playlist.trackList = await Track.find({ playlist: playlist._id }) // to be added: populate tracks
-        const playlistWithTracks = await Playlist.findOne({ slug: req.params.slug });
+        const playlistWithTracks = await Playlist.findOne({ slug: playlist.slug });
         res.send(playlistWithTracks)
     } catch (e) {
         res.status(400).send(e.message)

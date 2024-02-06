@@ -7,11 +7,16 @@ const schema = new Schema({
         minLength: 3,
         maxLength: 30
     },
-    duration_m: {
+    duration_min: {
         type: Number
     },
     playlist: {
-        type: SchemaTypes.ObjectId
+        type: SchemaTypes.ObjectId,
+        default: null
+    },
+    slug: {
+        type: String,
+        trim: true
     }
 })
 
@@ -21,9 +26,9 @@ schema.methods.generateSlug = async function () {
     let existentSlug = true;
     let slug = referenceSlug;
     let i = 1;
-    while(existentSlug){
-        existentSlug = await Track.exists({slug})
-        if(existentSlug){
+    while (existentSlug) {
+        existentSlug = await Track.exists({ slug })
+        if (existentSlug) {
             slug = referenceSlug + '-' + i
             i++;
         }
