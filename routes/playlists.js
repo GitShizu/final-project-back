@@ -71,7 +71,7 @@ router.delete('/:slug', async (req, res) => {
     try {
         await Playlist.findOneAndDelete({ slug: req.params.slug });
         const playlists = await Playlist.find();
-        res.semd(playlists);
+        res.send(playlists);
     } catch (e) {
         res.status(404).send(e.message)
     }
