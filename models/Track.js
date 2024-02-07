@@ -7,7 +7,7 @@ const schema = new Schema({
         minLength: 3,
         maxLength: 30
     },
-    duration_min: {
+    duration_sec: {
         type: Number
     },
     playlist: {

@@ -7,7 +7,7 @@ router.use(express.json());
 
 router.get('/', async (req, res) => {
     try {
-        const playlists = await Playlist.find().select('-trackList')
+        const playlists = await Playlist.find()
         const playlistsWithCount = await Promise.all(playlists.map(async p => {
             p.tracksCounter()
             return p
@@ -22,9 +22,8 @@ router.post('/', async (req, res) => {
     const playlist = new Playlist(req.body);
     await playlist.generateSlug();
     await playlist.tracksCounter();
-    playlist.trackList = [];
     await playlist.save();
-    const playlists = await Playlist.find().select('-trackList');
+    const playlists = await Playlist.find()
     res.send(playlists);
 })
 
@@ -48,16 +47,15 @@ router.patch('/:slug', async (req, res) => {
     }
     try {
         const playlist = await Playlist.findOne({ slug: req.params.slug });
-        const isTitleUpdated = playlist.title !== updatedPlaylist.title;
+        const isTitleUpdated = updatedPlaylist.title && playlist.title !== updatedPlaylist.title;
         Object.entries(updatedPlaylist).forEach(([key, value]) => {
-            if (key !== 'slug' && key !== 'trackList') {
+            if (key !== 'slug') {
                 playlist[key] = value;
             }
         })
         if (isTitleUpdated) {
             await playlist.generateSlug();
         }
-        playlist.trackList = [];
         await playlist.save();
         playlist.trackList = await Track.find({ playlist: playlist._id }) // to be added: populate tracks
         const playlistWithTracks = await Playlist.findOne({ slug: playlist.slug });

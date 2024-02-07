@@ -44,7 +44,7 @@ router.patch('/:slug', async(req,res)=>{
     }
     try{
         const track = await Track.findOne({slug: req.params.slug});
-        const isTitleUpdated = track.title !== updatedTrack.title;
+        const isTitleUpdated = updatedTrack.title && track.title !== updatedTrack.title;
         Object.entries(updatedTrack).forEach(([key,value])=>{
             if(key !== 'slug'){
                 track[key] = value

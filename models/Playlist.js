@@ -12,10 +12,6 @@ const schema = new Schema({
     tracksCount: {
         type: Number
     },
-    trackList: {
-        type: Array,
-        default: []
-    },
     // createdBy: {
     //     type: SchemaTypes.ObjectId
     // },
