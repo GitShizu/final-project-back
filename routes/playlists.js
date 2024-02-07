@@ -7,10 +7,11 @@ router.use(express.json());
 
 router.get('/', async (req, res) => {
     try {
-        const playlists = await Playlist.find()
-        const playlistsWithCount = await Promise.all(playlists.map(async p => {
-            p.tracksCounter()
-            return p
+        const playlistsDocs = await Playlist.find()
+        const playlistsWithCount = await Promise.all(playlistsDocs.map(async (pDoc)=>{
+            const playlist = pDoc.toObject();
+            playlist.tracks_count = await Track.countDocuments({playlist: pDoc._id})
+            return playlist
         }))
         res.send(playlistsWithCount)
     } catch (e) {
@@ -21,10 +22,15 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const playlist = new Playlist(req.body);
     await playlist.generateSlug();
-    await playlist.tracksCounter();
     await playlist.save();
-    const playlists = await Playlist.find()
-    res.send(playlists);
+    const playlistsDocs = await Playlist.find()
+        const playlistsWithCount = await Promise.all(playlistsDocs.map(async (pDoc)=>{
+            const playlist = pDoc.toObject();
+            playlist.tracks_count = await Track.countDocuments({playlist: pDoc._id})
+            return playlist
+        }))
+        res.send(playlistsWithCount)
+    res.send(playlistsWithCount);
 })
 
 router.get('/:slug', async (req, res) => {

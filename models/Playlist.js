@@ -9,7 +9,7 @@ const schema = new Schema({
         minLength: 2,
         maxLength: 50
     },
-    tracksCount: {
+    tracks_count: {
         type: Number
     },
     // createdBy: {
@@ -35,10 +35,6 @@ schema.methods.generateSlug = async function () {
         }
     }
     this.slug = slug
-}
-
-schema.methods.tracksCounter = async function(){
-    this.tracksCount = await Track.countDocuments({ playlist: this._id })
 }
 
 const Playlist = model('Playlist', schema);
