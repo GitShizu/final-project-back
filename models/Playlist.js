@@ -17,7 +17,8 @@ const schema = new Schema({
     // },
     slug: {
         type: String,
-        trim: true
+        trim: true,
+        index: true
     }
 },{ timestamps: true })
 
