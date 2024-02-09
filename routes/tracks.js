@@ -54,8 +54,7 @@ router.patch('/:slug', async(req,res)=>{
             await track.generateSlug()
         }
         await track.save()
-        const populatedTrack = await Track.findOne({slug: track.slug}).populate('playlist', 'slug title');
-        res.send(populatedTrack)
+        res.send(track)
     }catch(e){
         res.status(400).send(e.message);
     }

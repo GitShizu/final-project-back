@@ -7,13 +7,8 @@ router.use(express.json());
 
 router.get('/', async (req, res) => {
     try {
-        const playlistsDocs = await Playlist.find()
-        const playlistsWithCount = await Promise.all(playlistsDocs.map(async (pDoc)=>{
-            const playlist = pDoc.toObject();
-            playlist.tracks_count = await Track.countDocuments({playlist: pDoc._id})
-            return playlist
-        }))
-        res.send(playlistsWithCount)
+        const playlists = await Playlist.find().populate('track_list')
+        res.send(playlists)
     } catch (e) {
         res.status(500).send('Server error')
     }
@@ -23,23 +18,16 @@ router.post('/', async (req, res) => {
     const playlist = new Playlist(req.body);
     await playlist.generateSlug();
     await playlist.save();
-    const playlistsDocs = await Playlist.find()
-        const playlistsWithCount = await Promise.all(playlistsDocs.map(async (pDoc)=>{
-            const playlist = pDoc.toObject();
-            playlist.tracks_count = await Track.countDocuments({playlist: pDoc._id})
-            return playlist
-        }))
-        res.send(playlistsWithCount)
-    res.send(playlistsWithCount);
+    const playlists = await Playlist.find().populate('track_list')
+    res.send(playlists)
 })
 
 router.get('/:slug', async (req, res) => {
     try {
-        const playlist = await Playlist.findOne({ slug: req.params.slug }); // to be added: populate tracks
+        const playlist = await Playlist.findOne({ slug: req.params.slug }).populate('track_list')
         if (playlist === null) {
             throw new Error('Playlist not found');
         }
-        playlist.trackList = await Track.find({ playlist: playlist._id });
         res.send(playlist);
     } catch (e) {
         res.status(404).send(e.message);
@@ -55,17 +43,41 @@ router.patch('/:slug', async (req, res) => {
         const playlist = await Playlist.findOne({ slug: req.params.slug });
         const isTitleUpdated = updatedPlaylist.title && playlist.title !== updatedPlaylist.title;
         Object.entries(updatedPlaylist).forEach(([key, value]) => {
-            if (key !== 'slug') {
+            if (key !== 'slug' && key !== 'track_list') {
                 playlist[key] = value;
+            }
+
+            if (key === 'track_list') {
+                if (Array.isArray(updatedPlaylist.track_list)) {
+                    playlist.track_list = [...playlist.track_list, ...value]
+                } else {
+                    playlist.track_list = [...playlist.track_list, value]
+                }
             }
         })
         if (isTitleUpdated) {
             await playlist.generateSlug();
         }
         await playlist.save();
-        playlist.trackList = await Track.find({ playlist: playlist._id }) // to be added: populate tracks
-        const playlistWithTracks = await Playlist.findOne({ slug: playlist.slug });
-        res.send(playlistWithTracks)
+        const populatedPlaylist = await Playlist.findOne({ slug: playlist.slug }).populate('track_list')
+        res.send(populatedPlaylist)
+    } catch (e) {
+        res.status(400).send(e.message)
+    }
+})
+
+router.patch('/:slug/remove_track', async (req, res) => {
+    const track = req.body
+    if (!track || !Object.keys(track).length) {
+        res.status(400).send('You must edit at least one property to proceed')
+    }
+    try {
+        const playlist = await Playlist.findOne({ slug: req.params.slug });
+        const trackList = playlist.track_list
+        trackList.splice(track.remove, 1)
+        playlist.track_list = trackList
+        playlist.save()
+        res.send('Track removed')
     } catch (e) {
         res.status(400).send(e.message)
     }

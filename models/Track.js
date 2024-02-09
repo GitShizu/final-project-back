@@ -10,9 +10,10 @@ const schema = new Schema({
     duration_sec: {
         type: Number
     },
-    playlist: {
-        type: SchemaTypes.ObjectId,
-        default: null
+    author: {
+        type: String,
+        minLength: 3,
+        maxLength: 30
     },
     slug: {
         type: String,
