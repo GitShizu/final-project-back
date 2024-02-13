@@ -76,8 +76,9 @@ router.patch('/:slug/remove_track', async (req, res) => {
         const trackList = playlist.track_list
         trackList.splice(track.remove, 1)
         playlist.track_list = trackList
-        playlist.save()
-        res.send('Track removed')
+        await playlist.save()
+        const populatedPlaylist = await Playlist.findOne({ slug: playlist.slug }).populate('track_list')
+        res.send(populatedPlaylist)
     } catch (e) {
         res.status(400).send(e.message)
     }
