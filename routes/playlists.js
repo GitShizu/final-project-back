@@ -35,20 +35,20 @@ router.get('/:slug', async (req, res) => {
 })
 
 router.patch('/:slug', async (req, res) => {
-    const updatedPlaylist = req.body
-    if (!updatedPlaylist || !Object.keys(updatedPlaylist).length) {
+    const updatedData = req.body
+    if (!updatedData || !Object.keys(updatedData).length) {
         res.status(400).send('You must edit at least one property to proceed')
     }
     try {
         const playlist = await Playlist.findOne({ slug: req.params.slug });
-        const isTitleUpdated = updatedPlaylist.title && playlist.title !== updatedPlaylist.title;
-        Object.entries(updatedPlaylist).forEach(([key, value]) => {
+        const isTitleUpdated = updatedData.title && playlist.title !== updatedData.title;
+        Object.entries(updatedData).forEach(([key, value]) => {
             if (key !== 'slug' && key !== 'track_list') {
                 playlist[key] = value;
             }
 
             if (key === 'track_list') {
-                if (Array.isArray(updatedPlaylist.track_list)) {
+                if (Array.isArray(updatedData.track_list)) {
                     playlist.track_list = [...playlist.track_list, ...value]
                 } else {
                     playlist.track_list = [...playlist.track_list, value]

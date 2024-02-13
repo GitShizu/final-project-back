@@ -8,12 +8,14 @@ const schema = new Schema({
         maxLength: 30
     },
     duration_sec: {
-        type: Number
+        type: Number,
+        required: true
     },
     author: {
         type: String,
         minLength: 3,
-        maxLength: 30
+        maxLength: 30,
+        required: true
     },
     slug: {
         type: String,

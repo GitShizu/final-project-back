@@ -38,14 +38,14 @@ router.get('/:slug', async(req,res)=>{
 })
 
 router.patch('/:slug', async(req,res)=>{
-    const updatedTrack = req.body;
-    if(!updatedTrack || !Object.keys(req.body).length){
+    const updatedData = req.body;
+    if(!updatedData || !Object.keys(req.body).length){
         res.status(400).send('You must edit at least one property to proceed');
     }
     try{
         const track = await Track.findOne({slug: req.params.slug});
-        const isTitleUpdated = updatedTrack.title && track.title !== updatedTrack.title;
-        Object.entries(updatedTrack).forEach(([key,value])=>{
+        const isTitleUpdated = updatedData.title && track.title !== updatedData.title;
+        Object.entries(updatedData).forEach(([key,value])=>{
             if(key !== 'slug'){
                 track[key] = value
             }
