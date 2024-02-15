@@ -14,9 +14,9 @@ const schema = new Schema({
         default: [],
         ref: 'Track'
     },
-    // createdBy: {
-    //     type: SchemaTypes.ObjectId
-    // },
+    created_by: {
+        type: SchemaTypes.ObjectId
+    },
     slug: {
         type: String,
         trim: true,

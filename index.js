@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv'; dotenv.config();
 import playlistsRoutes from './routes/playlists.js'
 import tracksRoutes from './routes/tracks.js'
-import authRoutes from './routes/authorization.js'
+import authRoutes from './routes/authentication.js'
 import {requireAuth} from './libraries/authTools.js'
 const {MONGO_URI} = process.env;
 const PORT = process.env.PORT || 3000;

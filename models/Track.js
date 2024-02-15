@@ -3,9 +3,9 @@ import { SchemaTypes, model, Schema } from "mongoose";
 const schema = new Schema({
     title: {
         type: String,
-        required: true,
         minLength: 3,
-        maxLength: 30
+        maxLength: 30,
+        required: true
     },
     duration_sec: {
         type: Number,

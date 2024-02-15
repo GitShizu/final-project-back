@@ -4,6 +4,13 @@ import validator from "validator";
 const { isEmail, isStrongPassword } = validator;
 
 const schema = new Schema({
+    display_name:{
+        type: String,
+        required: true,
+        unique: true,
+        minLength: 2,
+        maxLength: 24
+    },
     email: {
         type: String,
         required: true,
@@ -25,7 +32,7 @@ const passwordCriteria = {
     minSymbols: 1
 }
 
-schema.statics.signUp = async function(email,password){
+schema.statics.signUp = async function(display_name,email,password){
     if (!isEmail(email)) {
         throw new Error(`${email} is not a valid email`)
     }
@@ -41,9 +48,16 @@ schema.statics.signUp = async function(email,password){
         throw error
     }
 
+    const nameExists = await this.exists({ display_name });
+    if (nameExists) {
+        const error = new Error(`${display_name} is already in use`)
+        error.statusCode= 401
+        throw error
+    }
+
     const hashedPassword = await hashPassword(password)
 
-    const user = await this.create({ email, password: hashedPassword })
+    const user = await this.create({ display_name, email, password: hashedPassword })
     return user;
 }
 
