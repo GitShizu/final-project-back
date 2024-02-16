@@ -6,7 +6,7 @@ import dotenv from 'dotenv'; dotenv.config();
 import playlistsRoutes from './routes/playlists.js'
 import tracksRoutes from './routes/tracks.js'
 import authRoutes from './routes/authentication.js'
-import {requireAuth} from './libraries/authTools.js'
+import {requireAuth, checkOwnedOrPublic} from './libraries/authTools.js'
 const {MONGO_URI} = process.env;
 const PORT = process.env.PORT || 3000;
 
@@ -18,6 +18,7 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 app.use(requireAuth())
+app.use(checkOwnedOrPublic())
 app.use('/playlists', playlistsRoutes);
 app.use('/tracks', tracksRoutes)
 

@@ -15,7 +15,11 @@ const schema = new Schema({
         ref: 'Track'
     },
     created_by: {
-        type: SchemaTypes.ObjectId
+        type: SchemaTypes.ObjectId,
+        immmutable: true
+    },
+    is_public: {
+        type: Boolean
     },
     slug: {
         type: String,

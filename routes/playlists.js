@@ -5,14 +5,7 @@ import Track from '../models/Track.js';
 const router = express.Router();
 router.use(express.json());
 
-router.get('/', async (req, res) => {
-    try {
-        const playlists = await Playlist.find().populate('track_list')
-        res.send(playlists)
-    } catch (e) {
-        res.status(500).send('Server error')
-    }
-})
+
 
 router.post('/', async (req, res) => {
     const playlist = new Playlist(req.body);
@@ -22,9 +15,18 @@ router.post('/', async (req, res) => {
     res.send(playlists)
 })
 
+router.get('/', async (req, res) => {
+    try {
+        const playlists = await Playlist.find({ ...req.queryFilters }).populate('track_list')
+        res.send(playlists)
+    } catch (e) {
+        res.status(500).send('Server error')
+    }
+})
+
 router.get('/:slug', async (req, res) => {
     try {
-        const playlist = await Playlist.findOne({ slug: req.params.slug }).populate('track_list')
+        const playlist = await Playlist.findOne({ slug: req.params.slug, ...req.queryFilters }).populate('track_list')
         if (playlist === null) {
             throw new Error('Playlist not found');
         }
@@ -40,27 +42,32 @@ router.patch('/:slug', async (req, res) => {
         res.status(400).send('You must edit at least one property to proceed')
     }
     try {
-        const playlist = await Playlist.findOne({ slug: req.params.slug });
-        const isTitleUpdated = updatedData.title && playlist.title !== updatedData.title;
-        Object.entries(updatedData).forEach(([key, value]) => {
-            if (key !== 'slug' && key !== 'track_list') {
-                playlist[key] = value;
-            }
-
-            if (key === 'track_list') {
-                if (Array.isArray(updatedData.track_list)) {
-                    playlist.track_list = [...playlist.track_list, ...value]
-                } else {
-                    playlist.track_list = [...playlist.track_list, value]
+        const playlist = await Playlist.findOne({ slug: req.params.slug, ...req.ownedOnly});
+        if (!playlist.created_by.equals(req.user._id)){
+            throw new Error("Unauthorized: You are not the owner of this resource");
+        } else {
+            const isTitleUpdated = updatedData.title && playlist.title !== updatedData.title;
+            Object.entries(updatedData).forEach(([key, value]) => {
+                if (key !== 'slug' && key !== 'track_list') {
+                    playlist[key] = value;
                 }
+
+                if (key === 'track_list') {
+                    if (Array.isArray(updatedData.track_list)) {
+                        playlist.track_list = [...playlist.track_list, ...value]
+                    } else {
+                        playlist.track_list = [...playlist.track_list, value]
+                    }
+                }
+            })
+            if (isTitleUpdated) {
+                await playlist.generateSlug();
             }
-        })
-        if (isTitleUpdated) {
-            await playlist.generateSlug();
+            await playlist.save();
+            const populatedPlaylist = await Playlist.findOne({ slug: playlist.slug }).populate('track_list')
+            res.send(populatedPlaylist)
         }
-        await playlist.save();
-        const populatedPlaylist = await Playlist.findOne({ slug: playlist.slug }).populate('track_list')
-        res.send(populatedPlaylist)
+
     } catch (e) {
         res.status(400).send(e.message)
     }
@@ -72,13 +79,17 @@ router.patch('/:slug/remove_track', async (req, res) => {
         res.status(400).send('You must edit at least one property to proceed')
     }
     try {
-        const playlist = await Playlist.findOne({ slug: req.params.slug });
-        const trackList = playlist.track_list
-        trackList.splice(track.remove, 1)
-        playlist.track_list = trackList
-        await playlist.save()
-        const populatedPlaylist = await Playlist.findOne({ slug: playlist.slug }).populate('track_list')
-        res.send(populatedPlaylist)
+        const playlist = await Playlist.findOne({ slug: req.params.slug, ...req.ownedOnly });
+        if (!playlist.created_by.equals(req.user._id)){
+            throw new Error("Unauthorized: You are not the owner of this resource");
+        }else{
+            const trackList = playlist.track_list
+            trackList.splice(track.remove, 1)
+            playlist.track_list = trackList
+            await playlist.save()
+            const populatedPlaylist = await Playlist.findOne({ slug: playlist.slug }).populate('track_list')
+            res.send(populatedPlaylist)
+        }
     } catch (e) {
         res.status(400).send(e.message)
     }
@@ -86,7 +97,12 @@ router.patch('/:slug/remove_track', async (req, res) => {
 
 router.delete('/:slug', async (req, res) => {
     try {
-        await Playlist.findOneAndDelete({ slug: req.params.slug });
+        const playlist = await Playlist.findOne({ slug: req.params.slug, ...ownedOnly });
+        if (!playlist.created_by.equals(req.user._id)){
+            throw new Error("Unauthorized: You are not the owner of this resource");
+        } else{
+            await playlist.deleteOne();
+        }
         const playlists = await Playlist.find();
         res.send(playlists);
     } catch (e) {

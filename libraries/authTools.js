@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv'; dotenv.config();
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 const { SECRET_KEY, PEPPER_KEY } = process.env;
 
 // Combine pepper key with user password and hash it. 
@@ -47,7 +48,13 @@ export const requireAuth = () => {
             if (!token) {
                 throw new Error('Token required')
             }
-            jwt.verify(token, SECRET_KEY)
+            const _id = jwt.verify(token, SECRET_KEY)
+            const user = await User.findById(_id)
+            if(!user){
+                throw new Error ('user not found')
+            }
+
+            req.user= user
 
         } catch (error) {
             console.error(error);
@@ -56,4 +63,19 @@ export const requireAuth = () => {
 
         next()
     }
+}
+
+export const checkOwnedOrPublic = () => {
+    return async (req, res, next) => {
+        req.ownedOrPublic = req.user.is_admin ?
+            {}
+            :
+            { $or: [{ created_by: req.user._id }, { is_public: true }] }
+        req.ownedOnly =  req.user.is_admin ?
+        {}
+        : 
+        {created_by: req.user._id}
+        next()
+    }
+
 }
