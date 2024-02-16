@@ -17,6 +17,13 @@ const schema = new Schema({
         maxLength: 30,
         required: true
     },
+    created_by: {
+        type: SchemaTypes.ObjectId,
+        immmutable: true
+    },
+    is_public: {
+        type: Boolean
+    },
     slug: {
         type: String,
         trim: true,
