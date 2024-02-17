@@ -17,6 +17,11 @@ const schema = new Schema({
         maxLength: 30,
         required: true
     },
+    img_path: {
+        type: String,
+        maxLength: 100,
+        default: 'https://source.unsplash.com/random/100x100/?music'
+    },
     created_by: {
         type: SchemaTypes.ObjectId,
         immmutable: true
