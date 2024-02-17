@@ -68,7 +68,7 @@ router.patch('/:slug', async(req,res)=>{
 
 router.delete('/:slug', async (req,res)=>{
     try{
-        const track = await Track.findOne({slug: req.params.slug, ...ownedOnly});
+        const track = await Track.findOne({slug: req.params.slug, ...req.ownedOnly});
         if (!track) {
             return res.status(404).send("Track not found or user unauthhorized");
         }
