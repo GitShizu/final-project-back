@@ -21,7 +21,8 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const playlists = await Playlist.find({ ...req.ownedOrPublic }).populate('track_list')
+        const playlists = await Playlist.find({ ...req.ownedOrPublic })
+        .populate('track_list').populate('created_by')
         res.send(playlists)
     } catch (e) {
         res.status(500).send('Server error')
@@ -30,7 +31,8 @@ router.get('/', async (req, res) => {
 
 router.get('/:slug', async (req, res) => {
     try {
-        const playlist = await Playlist.findOne({ slug: req.params.slug, ...req.ownedOrPublic }).populate('track_list')
+        const playlist = await Playlist.findOne({ slug: req.params.slug, ...req.ownedOrPublic })
+        .populate('track_list').populate('created_by')
         if (playlist === null) {
             throw new Error('Playlist not found');
         }

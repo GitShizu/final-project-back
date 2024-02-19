@@ -20,11 +20,12 @@ const schema = new Schema({
     img_path: {
         type: String,
         maxLength: 100,
-        default: 'https://source.unsplash.com/random/100x100/?music'
+        default: 'https://source.unsplash.com/random/200x200/?music'
     },
     created_by: {
         type: SchemaTypes.ObjectId,
-        immmutable: true
+        immmutable: true,
+        ref: 'User'
     },
     is_public: {
         type: Boolean
@@ -34,7 +35,7 @@ const schema = new Schema({
         trim: true,
         index: true
     }
-})
+}, { timestamps: true })
 
 schema.methods.generateSlug = async function () {
     const Track = this.constructor;

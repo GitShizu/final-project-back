@@ -16,7 +16,8 @@ const schema = new Schema({
     },
     created_by: {
         type: SchemaTypes.ObjectId,
-        immmutable: true
+        immmutable: true,
+        ref: 'User'
     },
     is_public: {
         type: Boolean

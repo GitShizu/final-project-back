@@ -18,7 +18,7 @@ router.post('/', async (req,res)=>{
 
 router.get('/', async(req,res)=>{
     try{
-        const tracks = await Track.find({ ...req.ownedOrPublic });
+        const tracks = await Track.find({ ...req.ownedOrPublic }).populate('created_by');
         res.send(tracks);
     }catch(e) {
         res.status(500).send('Server error');
@@ -27,7 +27,7 @@ router.get('/', async(req,res)=>{
 
 router.get('/:slug', async(req,res)=>{
     try{
-        const track = await Track.findOne({slug: req.params.slug, ...req.ownedOrPublic })
+        const track = await Track.findOne({slug: req.params.slug, ...req.ownedOrPublic }).populate('created_by');
         if(track === null){
             throw new Error('Not found')
         }
