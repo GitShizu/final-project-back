@@ -109,7 +109,7 @@ router.patch('/:slug/remove_track', async (req, res) => {
 
 router.delete('/:slug', async (req, res) => {
     try {
-        const playlist = await Playlist.findOne({ slug: req.params.slug, ...ownedOnly });
+        const playlist = await Playlist.findOne({ slug: req.params.slug, ...req.ownedOnly });
         if (!playlist) {
             return res.status(404).send("Playlist not found or user unauthhorized");
         }
