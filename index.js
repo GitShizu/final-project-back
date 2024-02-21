@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 app.use(cors({
     origin: [
         'http://localhost:5173', 
-        'https://final-project-front-aesesix0r-alex-s-projects-96a5b608.vercel.app/'
+        'https://final-project-front-theta.vercel.app'
     ],
     credentials: true}));
 app.use(express.json());
