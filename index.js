@@ -16,16 +16,15 @@ app.use(morgan('dev'));
 app.use(cors({
     origin: [
         'http://localhost:5173', 
-        'https://48-comics-app-front.vercel.app'
+        'https://final-project-front-aesesix0r-alex-s-projects-96a5b608.vercel.app/'
     ],
     credentials: true}));
 app.use(express.json());
-
-app.use('/auth', authRoutes);
-app.use(requireAuth())
-app.use(checkOwnedOrPublic())
-app.use('/playlists', playlistsRoutes);
-app.use('/tracks', tracksRoutes)
+app.use('/auth', authRoutes);             //rotte per autorizzazione
+app.use(requireAuth())                    //middleware per autenticazione
+app.use(checkOwnedOrPublic())             //middleware per autorizzazione
+app.use('/playlists', playlistsRoutes);   //rotte per playlists
+app.use('/tracks', tracksRoutes)          //rotte per tracce  
 
 mongoose.connect(MONGO_URI)
 .then(()=>{
