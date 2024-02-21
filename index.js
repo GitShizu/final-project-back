@@ -13,7 +13,12 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(morgan('dev'));
-app.use(cors({origin:'*'}));
+app.use(cors({
+    origin: [
+        'http://localhost:5173', 
+        'https://48-comics-app-front.vercel.app'
+    ],
+    credentials: true}));
 app.use(express.json());
 
 app.use('/auth', authRoutes);
