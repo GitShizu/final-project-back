@@ -52,6 +52,8 @@ schema.methods.generateSlug = async function () {
     }
     this.slug = slug
 }
+//metodo che genera lo slug per ogni risorsa. Se ne esiste già una con lo stesso slug
+//viene aggiunto un - e un numero crescente per ogni copia successiva. 
 
 const Track = model('Track', schema);
 export default Track;

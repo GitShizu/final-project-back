@@ -24,6 +24,8 @@ router.post('/signup', async (req, res) => {
         res.status(code).send(error.message);
     }
 })
+//rotta per il signup. Prende le credenziali dalla request, controlla che ci siano tutte ed
+//esegue il metodo signup() per creare lo user. Restituisce un oggetto che contiene user e token.
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -44,5 +46,7 @@ router.post('/login', async (req, res) => {
         res.status(code).send(error.message);
     }
 })
+//rotta per il login. Sostanzialmente uguale ma esegue il metodo login().
+
 
 export default router

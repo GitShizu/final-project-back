@@ -64,6 +64,8 @@ schema.statics.signUp = async function(display_name,email,password){
     const user = await this.create({ display_name, email, password: hashedPassword })
     return user;
 }
+//static per il signup. Controlla la validità di email e password, controlla che non esista già un utente 
+//con la stessa email o user name, cripta la password (vedi libraries/authTools) e restituisce l'utente.
 
 schema.statics.logIn = async function (email, password) {
     const user = await this.findOne({ email });
@@ -75,6 +77,8 @@ schema.statics.logIn = async function (email, password) {
     }
     return user
 }
+//static per il login. Controlla che l'utente esista e compara la password fornita 
+//con quella salvata sul documento al signup. Se corrispondono restituisce lo user.
 
 const User = model('User', schema);
 export default User;

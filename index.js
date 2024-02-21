@@ -13,25 +13,24 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(morgan('dev'));
+app.use(express.json());
 app.use(cors({
     origin: [
         'http://localhost:5173', 
         'https://final-project-front-theta.vercel.app'
     ],
     credentials: true}));
-app.use(express.json());
-
-app.use('/auth', authRoutes);
-app.use(requireAuth())
-app.use(checkOwnedOrPublic())
-app.use('/playlists', playlistsRoutes);
-app.use('/tracks', tracksRoutes)
+app.use('/auth', authRoutes);             //rotte per autorizzazione
+app.use(requireAuth())                    //middleware per autenticazione
+app.use(checkOwnedOrPublic())             //middleware per autorizzazione
+app.use('/playlists', playlistsRoutes);   //rotte per playlists
+app.use('/tracks', tracksRoutes)          //rotte per tracce  
 
 mongoose.connect(MONGO_URI)
 .then(()=>{
     console.log('Mongo connected succesfully');
     app.listen(PORT, ()=>{
-        console.log('Server running - listening on port 3000');
+        console.log(`Server running - listening on port ${PORT}`);
     })
 }).catch(err=>console.error(err))
 
