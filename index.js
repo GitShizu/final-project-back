@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cors({
     origin: [
         'http://localhost:5173', 
-        'https://final-project-front-five.vercel.app/'
+        'https://final-project-front-five.vercel.app'
     ],
     credentials: true}));
 app.use('/auth', authRoutes);             //rotte per autorizzazione
