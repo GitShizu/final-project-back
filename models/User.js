@@ -6,6 +6,7 @@ const { isEmail, isStrongPassword } = validator;
 const schema = new Schema({
     display_name:{
         type: String,
+        trim: true,
         required: true,
         unique: true,
         minLength: 2,

@@ -3,6 +3,7 @@ import { SchemaTypes, model, Schema } from "mongoose";
 const schema = new Schema({
     title: {
         type: String,
+        trim: true,
         minLength: 3,
         maxLength: 30,
         required: true
@@ -13,12 +14,14 @@ const schema = new Schema({
     },
     author: {
         type: String,
+        trim: true,
         minLength: 3,
         maxLength: 30,
         required: true
     },
     img_path: {
         type: String,
+        trim: true,
         maxLength: 500,
         default: 'https://source.unsplash.com/random/200x200/?music'
     },
