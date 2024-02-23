@@ -19,7 +19,7 @@ const schema = new Schema({
     },
     img_path: {
         type: String,
-        maxLength: 100,
+        maxLength: 500,
         default: 'https://source.unsplash.com/random/200x200/?music'
     },
     created_by: {
